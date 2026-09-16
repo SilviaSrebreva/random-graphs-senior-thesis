@@ -14,3 +14,10 @@ def generate_erdos_renyi_gnp(n, p):
                 edge_list.append((i, j))
 
     return adj_list, edge_list
+
+if __name__ == "__main__":
+    n = 3
+    p = 0.3
+    edge_list, adj_list = generate_erdos_renyi_gnp(n, p)
+    print("Adjacency List:", adj_list)
+    print("Edge List:", edge_list)
