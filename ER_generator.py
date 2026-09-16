@@ -15,9 +15,22 @@ def generate_erdos_renyi_gnp(n, p):
 
     return adj_list, edge_list
 
+def graph_info(n: int, edge_list: list, adj_list: dict):
+    m = len(edge_list)  # number of edges
+    degrees = [len(adj_list[i]) for i in range(n)]  # degree of each node
+    return {
+        "n": n,
+        "m": m,
+        "degrees": degrees,
+        "avg_degree": sum(degrees) / n if n > 0 else 0,
+        "min_degree": min(degrees) if degrees else 0,
+        "max_degree": max(degrees) if degrees else 0
+    }
+
 if __name__ == "__main__":
     n = 3
     p = 0.3
-    edge_list, adj_list = generate_erdos_renyi_gnp(n, p)
+    adj_list,  edge_list = generate_erdos_renyi_gnp(n, p)
     print("Adjacency List:", adj_list)
     print("Edge List:", edge_list)
+    print("Graph Info:", graph_info(n, edge_list, adj_list))
