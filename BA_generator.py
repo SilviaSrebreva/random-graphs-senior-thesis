@@ -21,7 +21,18 @@ def generate_ba(n,m):
             edge_list.append((i, j))
             adj_list[i].add(j)
             adj_list[j].add(i)
+
+    # we make a list T that will store the edges as many times as their degree is
+    # this way with just appending to this list T we can then check degree easily 
+
+    T = []
+    for i in range(m0):
+        degree_i = len(adj_list[i])
+        for count in range(degree_i):
+            T.append(i)
+
     
+    # i need to do preferentaial attachment next
 
     edge_list = []
     adj_list = {i: set() for i in range(n)}

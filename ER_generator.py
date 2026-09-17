@@ -9,8 +9,8 @@ def generate_erdos_renyi_gnp(n, p):
         for j in range(i + 1, n):
             if biased_coin_flip(p): 
                 #if the biased coin flip returns True, add an edge between i and j
-                adj_list[i].append(j) 
-                adj_list[j].append(i) 
+                adj_list[i].add(j) 
+                adj_list[j].add(i) 
                 edge_list.append((i, j))
 
     return adj_list, edge_list
