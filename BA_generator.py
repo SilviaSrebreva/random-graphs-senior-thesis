@@ -1,3 +1,5 @@
+import random 
+
 def generate_ba(n,m):
     #n - total number of nodes, 
     # m - edges with which each node contributes
@@ -15,7 +17,8 @@ def generate_ba(n,m):
     #m0 is a requirement for the graph algorithm to work mathematically
     #thanks to m0 we guarantee there are at east m nodes for the new node to attach to
     #each node in the start seed graph has degree m>0, this it is nonempty, again mathematical requirement
-
+    edge_list = []
+    adj_list = {i: set() for i in range(n)}
     for i in range(m0):
         for j in range(i + 1, m0):
             edge_list.append((i, j))
@@ -31,10 +34,39 @@ def generate_ba(n,m):
         for count in range(degree_i):
             T.append(i)
 
-    
+   
+
     # i need to do preferentaial attachment next
 
-    edge_list = []
-    adj_list = {i: set() for i in range(n)}
+    #preferential attachment follows
+    for new_node in range(m0, n):
+        chosen = set() #set has no duplicates, item in set can be found easily
+        while len(chosen) < m:
+            i = random.randrange(len(T))
+            candidate = T[i]
+            if candidate not in chosen:
+                chosen.add(candidate)
+
+        for element in chosen:
+            u = min(element, new_node)
+            v = max(element, new_node)
+            #we check min max to keep consistency of how we add edges, 
+            # thus we avoid storing two edges that are technicaly the same
+            edge_list.append((u, v))
+
+            adj_list[element].add(new_node)
+            adj_list[new_node].add(element)
+
+            T.append(new_node)
+            T.append(element)
+                        
 
     return adj_list, edge_list
+
+if __name__ == "__main__":
+    n = 10
+    m = 2
+    adj_list,  edge_list = generate_ba(n, m)
+    print("Adjacency List:", adj_list)
+    print("Edge List:", edge_list)
+    #print("Graph Info:", graph_info(n, edge_list, adj_list))
