@@ -19,11 +19,20 @@ def generate_ba(n,m):
     #each node in the start seed graph has degree m>0, this it is nonempty, again mathematical requirement
     edge_list = []
     adj_list = {i: set() for i in range(n)}
+
+    history = [] #used for visualisation
+    original_edges = []
+
+
+
     for i in range(m0):
         for j in range(i + 1, m0):
             edge_list.append((i, j))
+            original_edges.append((i, j))
             adj_list[i].add(j)
             adj_list[j].add(i)
+
+    history.append({"node": None, "edges": original_edges})
 
     # we make a list T that will store the edges as many times as their degree is
     # this way with just appending to this list T we can then check degree easily 
@@ -47,12 +56,14 @@ def generate_ba(n,m):
             if candidate not in chosen:
                 chosen.add(candidate)
 
+        new_edges = []
         for element in chosen:
             u = min(element, new_node)
             v = max(element, new_node)
             #we check min max to keep consistency of how we add edges, 
             # thus we avoid storing two edges that are technicaly the same
             edge_list.append((u, v))
+            new_edges.append((u, v))
 
             adj_list[element].add(new_node)
             adj_list[new_node].add(element)
@@ -60,13 +71,14 @@ def generate_ba(n,m):
             T.append(new_node)
             T.append(element)
                         
+        history.append({"node": new_node, "edges": new_edges})
 
-    return adj_list, edge_list
+    return adj_list, edge_list, history
 
 if __name__ == "__main__":
     n = 10
     m = 2
-    adj_list,  edge_list = generate_ba(n, m)
+    adj_list,  edge_list, history = generate_ba(n, m)
     print("Adjacency List:", adj_list)
     print("Edge List:", edge_list)
     #print("Graph Info:", graph_info(n, edge_list, adj_list))
