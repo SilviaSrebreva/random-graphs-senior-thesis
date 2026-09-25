@@ -1,7 +1,7 @@
 import math
 import tkinter as tk
 
-from er_generator import generate_erdos_renyi_gnp
+from ER_generator import generate_erdos_renyi_gnp
 
 #canvas constants
 CANVAS_SIZE = 600      # the drawing area is 600x600 pixels
