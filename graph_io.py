@@ -1,4 +1,20 @@
 import os
+import json
+
+class Node:
+    def __init__(self, node_id, state=None):
+        self.node_id = node_id
+        self.state   = state # none now, "S"/"I"/"R" when I get to do SIR
+
+    def to_dict(self):
+        # converts the object to a dict so json.dump can serialise it
+        return {"id": self.node_id, "state": self.state}
+
+    @classmethod
+    def from_dict(cls, d):
+        # reconstructs a Node object from a dict loaded by json.load
+        return cls(d["id"], d.get("state"))
+
 
 def save_graph_txt(
     edge_list: list[tuple],
@@ -17,7 +33,7 @@ def save_graph_txt(
         for u, v in edge_list:
             f.write(f"{u} {v}\n")
 
-    print(f"  Saved {graph_type.upper()} graph: {len(edge_list)} edges ; in {filepath}")
+    print(f"Saved {graph_type.upper()} graph: {len(edge_list)} edges ; in {filepath}")
 
 def _header_str(line: str, key: str):
     # extract a string value for 'key=VALUE' from a line, or None
@@ -46,8 +62,8 @@ def _parse_header(line: str) -> tuple[int, str]:
     return n, graph_type or "unknown"
 
 def _build_adjacency_list(n: int, edge_list: list[tuple]) -> dict:
-   # build an adjacency list from the edge list
-   # every node is visited, even unocnnected ones
+    # build an adjacency list from the edge list
+    # every node is visited, even unocnnected ones
 
     adj_list = {i: set() for i in range(n)}
     for u, v in edge_list:
@@ -90,3 +106,41 @@ def adjacency_list_to_edge_list(adj_list: dict) -> list[tuple]:
             edges.add((min(u, v), max(u, v)))
     return sorted(edges)
 
+def save_graph_json(
+    edge_list: list[tuple],
+    n: int,
+    graph_type: str,
+    filepath: str,
+):
+    os.makedirs(os.path.dirname(filepath) or ".", exist_ok=True)
+
+    graph_data = {
+        "graph_type": graph_type,
+        "n": n,
+        "m": len(edge_list),
+        "edges": edge_list
+    }
+
+    with open(filepath, "w") as f:
+        json.dump(graph_data, f, indent=4)
+
+    print(f"Saved {graph_type.upper()} graph: {len(edge_list)} edges ; in {filepath}")
+
+def load_graph_json(filepath):
+    if not os.path.exists(filepath):
+        raise FileNotFoundError("Graph file not found: {}".format(filepath))
+
+    with open(filepath, "r") as f:
+        graph_data = json.load(f)
+
+    graph_type = graph_data["graph_type"]
+    n          = graph_data["n"]
+    expected_m = graph_data["m"]
+
+    edge_list  = [tuple(edge) for edge in graph_data["edges"]]
+    if len(edge_list) != expected_m:
+        raise ValueError("Edge count mismatch: expected {} got {}".format(
+            expected_m, len(edge_list)))
+
+    adj_list = _build_adjacency_list(n, edge_list)
+    return n, graph_type, edge_list, adj_list
