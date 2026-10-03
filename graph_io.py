@@ -124,8 +124,6 @@ def save_graph_json(
     with open(filepath, "w") as f:
         json.dump(graph_data, f, indent=4)
 
-    print(f"Saved {graph_type.upper()} graph: {len(edge_list)} edges ; in {filepath}")
-
 def load_graph_json(filepath):
     if not os.path.exists(filepath):
         raise FileNotFoundError("Graph file not found: {}".format(filepath))
@@ -138,9 +136,6 @@ def load_graph_json(filepath):
     expected_m = graph_data["m"]
 
     edge_list  = [tuple(edge) for edge in graph_data["edges"]]
-    if len(edge_list) != expected_m:
-        raise ValueError("Edge count mismatch: expected {} got {}".format(
-            expected_m, len(edge_list)))
 
     adj_list = _build_adjacency_list(n, edge_list)
     return n, graph_type, edge_list, adj_list
