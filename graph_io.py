@@ -15,6 +15,20 @@ class Node:
         # reconstructs a Node object from a dict loaded by json.load
         return cls(d["id"], d.get("state"))
 
+# note to self: to_dict needs an instance to read from. 
+# from_dict needs the class to construct with.
+# this is why to_dict is an instance method and from_dict is a class method
+class Edge:
+    def __init__(self, u, v):
+        self.u      = u
+        self.v      = v  
+
+    def to_dict(self):
+        return {"u": self.u, "v": self.v}
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(d["u"], d["v"]) # use cls in case i add a subclass of Edge later
 
 def save_graph_txt(
     edge_list: list[tuple],
@@ -33,7 +47,6 @@ def save_graph_txt(
         for u, v in edge_list:
             f.write(f"{u} {v}\n")
 
-    print(f"Saved {graph_type.upper()} graph: {len(edge_list)} edges ; in {filepath}")
 
 def _header_str(line: str, key: str):
     # extract a string value for 'key=VALUE' from a line, or None
@@ -61,7 +74,7 @@ def _parse_header(line: str) -> tuple[int, str]:
         raise ValueError(f"Could not parse 'n' from header: {line!r}")
     return n, graph_type or "unknown"
 
-def _build_adjacency_list(n: int, edge_list: list[tuple]) -> dict:
+def _build_adjacency_list(n: int, edge_list: list[tuple]):
     # build an adjacency list from the edge list
     # every node is visited, even unocnnected ones
 
@@ -85,7 +98,7 @@ def load_graph_txt(filepath: str):
             if not line:
                 continue
             if line.startswith("#"):
-                # Parse header: # graph_type=er n=500 m=2481
+                # parse header: # graph_type=er n=500 m=2481
                 n, graph_type = _parse_header(line)
             else:
                 u, v = map(int, line.split())
@@ -96,9 +109,10 @@ def load_graph_txt(filepath: str):
     adj_list = _build_adjacency_list(n, edge_list)
     return n, graph_type, edge_list, adj_list
 
-def adjacency_list_to_edge_list(adj_list: dict) -> list[tuple]:
+def adjacency_list_to_edge_list(adj_list: dict):
     
     # convert an adjacency list back to a deduplicated edge list.
+    # it is a set exactly because each edge is stored twice (u,v) and (v,u)
     # might be useful in simulation?
     edges = set()
     for u, neighbours in adj_list.items():
@@ -107,10 +121,11 @@ def adjacency_list_to_edge_list(adj_list: dict) -> list[tuple]:
     return sorted(edges)
 
 def save_graph_json(
-    edge_list: list[tuple],
+    edge_list: list[Edge],
+    nodes: list[Node],
     n: int,
     graph_type: str,
-    filepath: str,
+    filepath: str,  
 ):
     os.makedirs(os.path.dirname(filepath) or ".", exist_ok=True)
 
@@ -118,7 +133,8 @@ def save_graph_json(
         "graph_type": graph_type,
         "n": n,
         "m": len(edge_list),
-        "edges": edge_list
+        "nodes":      [node.to_dict() for node in nodes],
+        "edges":      [edge.to_dict() for edge in edge_list]
     }
 
     with open(filepath, "w") as f:
@@ -132,10 +148,11 @@ def load_graph_json(filepath):
         graph_data = json.load(f)
 
     graph_type = graph_data["graph_type"]
-    n          = graph_data["n"]
-    expected_m = graph_data["m"]
+    n = graph_data["n"]
+    nodes     = [Node.from_dict(node) for node in graph_data["nodes"]]
+    edge_objs = [Edge.from_dict(edge) for edge in graph_data["edges"]]
 
-    edge_list  = [tuple(edge) for edge in graph_data["edges"]]
+    edge_list = [(e.u, e.v) for e in edge_objs]
+    adj_list  = _build_adjacency_list(n, edge_list)
 
-    adj_list = _build_adjacency_list(n, edge_list)
-    return n, graph_type, edge_list, adj_list
+    return n, graph_type, nodes, edge_objs, edge_list, adj_list
