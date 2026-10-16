@@ -31,7 +31,7 @@ def visualise_ba(n,m):
     #this is how we will draw nodes
     for node in range(n):
 
-        angle = 2 * math.pi * node / n # essentially each node gets 2pi/2 degrtees each
+        angle = 2 * math.pi * node / n # essentially each node gets 2pi/2 radians each
 
         x = centre + radius * math.cos(angle)
         y = centre + radius * math.sin(angle)

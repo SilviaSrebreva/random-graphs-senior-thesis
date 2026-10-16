@@ -6,13 +6,6 @@ def molloy_reed_criterion(degrees):
     # a random graph with a given degree distribution
     # has a giant component(with high probability) iff
     # <k^2> - 2<k> > 0,   equivalently   kappa = <k^2> / <k> > 2
-    # where <x> means the average of x over all nodes
-
-    # IMPORTANT: This criterion is proven for graphs where only the
-    # degree sequence is fixed and edges are random.
-    # It is theoretically valid for ER graphs.
-    # For BA graphs, kappa should be reported as a descriptive
-    # statistic only, not interpreted as a threshold test.
 
     n = len(degrees)
     if n == 0:
@@ -34,4 +27,4 @@ def molloy_reed_criterion(degrees):
     # we use a dictionary to return multiple values, 
     # so that we can access them by name instead of by index
 
-#might add giant_componnet_size function as well 
+# might add giant_componnet_size function as well 

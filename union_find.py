@@ -6,14 +6,16 @@ class UnionFind:
     def __init__(self, n):
         self.n = n
         self.parent = list(range(n)) # [0, 1, 2, ..., n-1], every node starts as its own root
-        self.rank = [0] * n          # [0, 0, 0, ..., 0], rank is roughly how tall the tree is
+        self.rank = [0] * n          # [0, 0, 0, ..., 0], rank is how tall the tree is
 
     def find(self, x):
         # follows parent pointers up until we reach the root
         # a node is the root when it is its own parent
+        # recursion 
         if self.parent[x] != x:
             # path compression: on the way back, point x straight at the root
             # so next time we look for x it takes one step instead of many
+            # studied this in class 
             self.parent[x] = self.find(self.parent[x])
         return self.parent[x]
 
@@ -54,10 +56,10 @@ class UnionFind:
 
         # step 3: count how many nodes share each root
         # each root is one component, so this gives the size of every component
-        component_size = {}
-        for node in range(n):
-            root = self.find(node)
-            if root in component_size:
+        component_size = {} # in this dict we map roots to their component sizes
+        for node in range(n): 
+            root = self.find(node) # tells us the parent, the root of the component
+            if root in component_size: # if the root is already in the dict, increase it with 1
                 component_size[root] = component_size[root] + 1
             else:
                 component_size[root] = 1
