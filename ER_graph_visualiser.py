@@ -32,7 +32,7 @@ def visualise_er(n, p):
     #this is how we will draw nodes
     for node in range(n):
 
-        angle = 2 * math.pi * node / n # essentially each node gets 2pi/n degrees each
+        angle = 2 * math.pi * node / n # essentially each node gets 2pi/n radians each
 
         x = centre + radius * math.cos(angle)
         y = centre + radius * math.sin(angle)

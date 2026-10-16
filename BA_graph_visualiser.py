@@ -50,27 +50,30 @@ def visualise_ba(n,m):
             width=3
         )
 
+    def draw_node(node):
+        x, y = positions[node]
+
+        canvas.create_oval(
+                x - NODE_RADIUS,
+                y - NODE_RADIUS,
+                x + NODE_RADIUS,
+                y + NODE_RADIUS,
+                fill="lightgreen"
+            )
+
+        canvas.create_text(
+                x,
+                y,
+                text=str(node)
+            )
+
     def draw_step(step):
         for u, v in history[step]["edges"]: #get the edges value of this step
             draw_edge(u, v)
         node = history[step]["node"] #get the node value of this step in history
 
         if node is not None:
-            x, y = positions[node]
-
-            canvas.create_oval(
-                    x - NODE_RADIUS,
-                    y - NODE_RADIUS,
-                    x + NODE_RADIUS,
-                    y + NODE_RADIUS,
-                    fill="lightgreen"
-                )
-
-            canvas.create_text(
-                    x,
-                    y,
-                    text=str(node)
-                )
+            draw_node(node)
 
         if step < len(history) - 1:
             root.after(
@@ -78,6 +81,10 @@ def visualise_ba(n,m):
                 draw_step,
                 step + 1
             ) #after this amount of time do the following
+
+    #the seed nodes are 0 to m (m0 = m + 1 in the generator), we draw them before the first step
+    for node in range(m + 1):
+        draw_node(node)
 
     draw_step(0)
 
