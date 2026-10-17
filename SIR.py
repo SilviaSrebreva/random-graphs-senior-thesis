@@ -44,8 +44,9 @@ def run_sir(adj_list, beta, gamma, initial_infected, max_steps):
         states = next_states
         record(results, states)
 
-    return results
-    # list of dicts, one per step, each with the fractions of S, I and R nodes out of n
+    return results, states
+    # results: list of dicts, one per step, each with the fractions of S, I and R nodes out of n
+    # states: the final state of every node after the simulation
 
 def record(results, states):
     # counts how many nodes are in each state and stores them as fractions of n
@@ -58,9 +59,19 @@ def record(results, states):
 
 if __name__ == "__main__":
     from BA_generator import generate_ba
+    from graph_io import Node, Edge, save_graph_json
 
-    adj_list, edge_list, history = generate_ba(1000, 2)
-    results = run_sir(adj_list, beta=0.05, gamma=0.1, initial_infected=[0], max_steps=200)
+    n = 1000
+    adj_list, edge_list, history = generate_ba(n, 2)
+    results, final_states = run_sir(adj_list, beta=0.05, gamma=0.1, initial_infected=[0], max_steps=200)
 
     for step, counts in enumerate(results):
         print(step, counts)
+
+    # save the graph together with the final state of every node
+    nodes = [Node(i) for i in range(n)]
+    for node in nodes:
+        node.state = final_states[node.node_id]
+    edge_objs = [Edge(u, v) for u, v in edge_list] # save_graph_json needs Edge objects
+
+    save_graph_json(edge_objs, nodes, n, "ba", "data/ba_graph_sir.json")
