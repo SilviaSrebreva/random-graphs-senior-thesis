@@ -5,7 +5,7 @@ def molloy_reed_criterion(degrees):
     # Molloy-Reed criterion
     # a random graph with a given degree distribution
     # has a giant component(with high probability) iff
-    # <k^2> - 2<k> > 0,   equivalently   kappa = <k^2> / <k> > 2
+    # <k^2> - 2<k> > 0, equivalently kappa = <k^2> / <k> > 2
 
     n = len(degrees)
     if n == 0:
