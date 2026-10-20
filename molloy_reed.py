@@ -27,4 +27,11 @@ def molloy_reed_criterion(degrees):
     # we use a dictionary to return multiple values, 
     # so that we can access them by name instead of by index
 
-# might add giant_componnet_size function as well 
+def critical_fraction(kappa):
+    # fraction of nodes we can remove at random before the giant component disappears
+    # f_c = 1 - 1 / (kappa - 1), (Cohen et al. 2000)
+    if kappa <= 2:
+        return 0 # there is no giant component to begin with
+    return 1 - 1 / (kappa - 1)
+
+# might add giant_componnet_size function as well - done in union_find.py in rebuild method
