@@ -1,3 +1,5 @@
+import os
+
 from biased_coin import biased_coin_flip
 
 # SIR model: every node is
@@ -56,6 +58,14 @@ def record(results, states):
     R = list(states.values()).count("R") / n
     results.append({"S": S, "I": I, "R": R})
 
+def save_sir_csv(results, filepath):
+    # will use in plotting, same idea as save_results_csv in attack_simulation
+    os.makedirs(os.path.dirname(filepath) or ".", exist_ok=True) # same as in graph_io
+    with open(filepath, "w") as f:
+        f.write("step,S,I,R\n")
+        for step, row in enumerate(results): # enumerate gives the step number together with the row
+            f.write(f"{step},{row['S']},{row['I']},{row['R']}\n")
+            # step gets the position in the list, row is the dict with the fractions of S, I and R nodes
 
 if __name__ == "__main__":
     from BA_generator import generate_ba
