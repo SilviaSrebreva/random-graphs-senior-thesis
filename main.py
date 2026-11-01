@@ -7,6 +7,7 @@ from graph_io import save_graph_txt, save_graph_json, load_graph_txt, Node, Edge
 from molloy_reed import get_degrees, molloy_reed_criterion, critical_fraction
 from attack_simulation import simulate_attack, save_results_csv
 from SIR import run_sir, save_sir_csv
+from plotting import plot_robustness, plot_sir
 
 # parameters
 SEED = 42 # seems to be a convention to use 42, i read spomething about The Hitchhiker’s Guide to the Galaxy lol
@@ -72,10 +73,14 @@ ba_results, ba_states = run_sir(ba_adj, beta, gamma, ba_start, max_steps)
 save_sir_csv(er_results, "results/er_sir.csv")
 save_sir_csv(ba_results, "results/ba_sir.csv")
 
-# save the graph together with the final state of every node (not over the original files)
+# SAVE the graph together with the final state of every node (not over the original files)
 # json format is used so the node states can be stored as well
 er_nodes = [Node(i, er_states[i]) for i in range(n_er)]
 ba_nodes = [Node(i, ba_states[i]) for i in range(n_ba)]
 save_graph_json([Edge(u, v) for u, v in er_edges], er_nodes, n_er, er_type, "results/er_graph_sir.json")
 save_graph_json([Edge(u, v) for u, v in ba_edges], ba_nodes, n_ba, ba_type, "results/ba_graph_sir.json")
 
+# PLOTTING
+plot_robustness(er_fc)
+plot_sir()
+print("plots saved in figures/")
