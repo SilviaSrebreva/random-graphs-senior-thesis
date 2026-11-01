@@ -31,7 +31,7 @@ def visualise_ba(n,m):
     #this is how we will draw nodes
     for node in range(n):
 
-        angle = 2 * math.pi * node / n # essentially each node gets 2pi/2 radians each
+        angle = 2 * math.pi * node / n # essentially each node gets 2pi/n radians each
 
         x = centre + radius * math.cos(angle)
         y = centre + radius * math.sin(angle)
@@ -78,6 +78,25 @@ def visualise_ba(n,m):
                 draw_step,
                 step + 1
             ) #after this amount of time do the following
+
+    #the seed nodes are 0 to m (m0 = m + 1 in the generator)
+    #step 0 has no single new node, so we draw them before the first step
+    for node in range(m + 1):
+        x, y = positions[node]
+
+        canvas.create_oval(
+                x - NODE_RADIUS,
+                y - NODE_RADIUS,
+                x + NODE_RADIUS,
+                y + NODE_RADIUS,
+                fill="lightgreen"
+            )
+
+        canvas.create_text(
+                x,
+                y,
+                text=str(node)
+            )
 
     draw_step(0)
 
