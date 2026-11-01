@@ -34,7 +34,7 @@ for name in ["er_targeted", "er_random", "ba_targeted", "ba_random"]:
 
 # Molloy-Reed threshold for random removal on the ER graph
 # should think of how not to hardcode this, but for now it's ok
-# maybe have file results/molloy_reed.csv
+# maybe have a file results/molloy_reed.csv
 n_er, er_type, er_edges, er_adj = load_graph_txt("data/er_graph.edgelist")
 er_fc = critical_fraction(molloy_reed_criterion(get_degrees(er_adj))["kappa"])
 fig.add_vline(x=er_fc, line_dash="dash", annotation_text="ER f_c")
@@ -46,3 +46,21 @@ fig.update_layout(
 )
 fig.write_html("figures/robustness.html")
 
+# PLOT 2 - SIR time series, one figure for ER and one for BA
+for name in ["er", "ba"]:
+    data = read_csv(f"results/{name}_sir.csv")
+    fig = go.Figure() # makes new figure
+    fig.add_trace(go.Scatter(x=data["step"], y=data["S"], name="S"))
+    fig.add_trace(go.Scatter(x=data["step"], y=data["I"], name="I"))
+    fig.add_trace(go.Scatter(x=data["step"], y=data["R"], name="R"))
+    fig.update_layout(
+        title=f"SIR on {name.upper()}",
+        xaxis_title="step",
+        yaxis_title="fraction of nodes"
+    )
+    fig.write_html(f"figures/{name}_sir.html")
+
+print("plots saved in figures/")
+
+# maybe in the future i could do these as seperate methods
+# so user can choose which plots to make, but for now this is fine
