@@ -88,4 +88,6 @@ def visualise_er(n, p):
     root.mainloop() #to keep the window open
 
 
-visualise_er(10, 0.3)
+# only runs when this file is started directly, not when main.py imports it
+if __name__ == "__main__":
+    visualise_er(10, 0.3)

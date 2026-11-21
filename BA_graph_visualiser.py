@@ -102,5 +102,7 @@ def visualise_ba(n,m):
 
     root.mainloop() #to keep the window open
 
-visualise_ba(10, 2)
+# only runs when this file is started directly, not when main.py imports it
+if __name__ == "__main__":
+    visualise_ba(10, 2)
         
